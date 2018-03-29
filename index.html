@@ -22,40 +22,108 @@
       margin-left: 0;
       margin-bottom: 0;}
       #mapid {height: 100%;}
+
     </style>
   </head>
   <body>
-     <div id="mapid" class="test"></div>
+     <div id="mapid"></div>
 
      <script type="text/javascript">
       //var mymap = L.map('mapid').setView([47.4997, -122.151 ], 11);
+      var street = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoieXVueW91IiwiYSI6ImNpczg2aDh0NTAwMzkyeXA3MXU3YjMxeGcifQ.z-j7gq3uS7yQ2CCjiaIp1g', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+    maxZoom: 18,
+    id: 'mapbox.streets',
+    accessToken: 'pk.eyJ1IjoieXVueW91IiwiYSI6ImNpczg2aDh0NTAwMzkyeXA3MXU3YjMxeGcifQ.z-j7gq3uS7yQ2CCjiaIp1g'
+  });
 
-       let baseLayer=L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiaWNlOHh4eHgiLCJhIjoiY2pibHh2NDA2NHBpYzJxcWdjdG1iMzA0eiJ9.cnZSGe7YbOpIU6CJEYg14g', {
+  var dark = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoieXVueW91IiwiYSI6ImNpczg2aDh0NTAwMzkyeXA3MXU3YjMxeGcifQ.z-j7gq3uS7yQ2CCjiaIp1g', {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
     maxZoom: 18,
     id: 'mapbox.dark',
-    accessToken: 'pk.eyJ1IjoiaWNlOHh4eHgiLCJhIjoiY2pibHh2NDA2NHBpYzJxcWdjdG1iMzA0eiJ9.cnZSGe7YbOpIU6CJEYg14g'
-    });
+    accessToken: 'pk.eyJ1IjoieXVueW91IiwiYSI6ImNpczg2aDh0NTAwMzkyeXA3MXU3YjMxeGcifQ.z-j7gq3uS7yQ2CCjiaIp1g'
+  })
 
     var map = new L.Map('mapid', {
       center: new L.LatLng(47.4997, -122.151),
       zoom:11,
-      layers: [baseLayer]
+      layers: [street]
     });
 
-    d3.csv("./heatmap.csv",
+    var baseMaps = {
+      "Dark": dark,
+      "Streets": street
+    };
+    var toggle = L.control.layers(baseMaps).addTo(map);
+    function style(feature) {
+      return {
+          fillColor:'#997732',
+          weight: 1,
+          opacity: 1,
+          color: '#997732',
+          dashArray: '1',
+          fillOpacity: 0.7
+      };
+    }
+
+    d3.json('./wetlands.geojson',function(err,data){
+      //console.log(data);
+      wetlands=L.geoJSON(data,{
+        style:style
+    }).addTo(map); 
+      toggle.addOverlay(wetlands, "wetlands");
+    });
+
+    function style2(feature) {
+      return {
+          fillColor:'#6B8E23',
+          weight: 1,
+          opacity: 1,
+          color: '#6B8E23',
+          dashArray: '3',
+          fillOpacity: 0.7
+      };
+    }
+
+    d3.json('./Bogs.geojson',function(err,data){
+      //console.log(data);
+      Bogs=L.geoJSON(data,{
+        style:style2
+    }).addTo(map); 
+      toggle.addOverlay(Bogs, "Bogs");
+    });
+
+      var geojsonMarkerOptions = {
+        radius: 3,
+        fillColor: "#ff7800",
+        color: "#000",
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8
+      };
+
+      d3.json('./Middle.geojson',function(err,data){
+        Middle=L.geoJSON(data,{
+          pointToLayer: function (feature, latlng) {
+              return L.circleMarker(latlng, geojsonMarkerOptions);
+          }
+      }).bindPopup(function (layer) {
+            return layer.feature.properties.SCHOOL;
+        }).addTo(map); 
+        toggle.addOverlay(Middle, "Middle School");
+      });
+
+    d3.csv("./House.csv",
       function(mydata) {
       var cfg = {
-        "radius": .005,
+        "radius": .003,
         "maxOpacity": .8, 
         "scaleRadius": true, 
         "useLocalExtrema": true,
         latField: 'lat',
         lngField: 'long',
-        // which field name in your data represents the data value - default "value"
         valueField: 'price'
       };
-        //heatmapLayer.setData(data);
         var testData = {
           max: 8,
           data:mydata
@@ -65,7 +133,120 @@
         var heatmapLayer = new HeatmapOverlay(cfg);
         map.addLayer(heatmapLayer);
         heatmapLayer.setData(testData);
+        toggle.addOverlay(heatmapLayer, "House Price Heatmap");
     });
+
+    d3.csv("./Noise.csv",
+      function(mydata) {
+      var cfg = {
+        "radius": .0025,
+        "maxOpacity": .5, 
+        "scaleRadius": true, 
+        "useLocalExtrema": true,
+        latField: 'lat',
+        lngField: 'lon',
+        valueField: 'grade'
+      };
+        var testData = {
+          max: 8,
+          data:mydata
+        };
+        console.log(testData);
+
+        var noise_heatmapLayer = new HeatmapOverlay(cfg);
+       
+        noise_heatmapLayer.setData(testData);
+        toggle.addOverlay(noise_heatmapLayer, "Noise Heatmap");
+    });
+
+    d3.csv("./alcohol.csv",
+      function(mydata) {
+      var cfg = {
+        "radius": .0025,
+        "maxOpacity": .5, 
+        "scaleRadius": true, 
+        "useLocalExtrema": true,
+        latField: 'lat',
+        lngField: 'lon',
+      };
+        var testData = {
+          max: 8,
+          data:mydata
+        };
+        console.log(testData);
+
+        var alcohol_heatmapLayer = new HeatmapOverlay(cfg);
+       
+        alcohol_heatmapLayer.setData(testData);
+        toggle.addOverlay(alcohol_heatmapLayer, "Alcohol Heatmap");
+    });
+
+    d3.csv("./theft.csv",
+      function(mydata) {
+      var cfg = {
+        "radius": .0025,
+        "maxOpacity": .5, 
+        "scaleRadius": true, 
+        "useLocalExtrema": true,
+        latField: 'lat',
+        lngField: 'lon',
+      };
+        var testData = {
+          max: 8,
+          data:mydata
+        };
+        console.log(testData);
+
+        var theft_heatmapLayer = new HeatmapOverlay(cfg);
+       
+        theft_heatmapLayer.setData(testData);
+        toggle.addOverlay(theft_heatmapLayer, "Theft Heatmap");
+    });
+
+    d3.csv("./suspect.csv",
+      function(mydata) {
+      var cfg = {
+        "radius": .0015,
+        "maxOpacity": .5, 
+        "scaleRadius": true, 
+        "useLocalExtrema": true,
+        latField: 'lat',
+        lngField: 'lon',
+      };
+        var testData = {
+          max: 8,
+          data:mydata
+        };
+        console.log(testData);
+
+        var suspect_heatmapLayer = new HeatmapOverlay(cfg);
+       
+        suspect_heatmapLayer.setData(testData);
+        toggle.addOverlay(suspect_heatmapLayer, "Suspect Heatmap");
+    });
+
+    d3.csv("./Park.csv",
+      function(mydata) {
+      var cfg = {
+        "radius": .0015,
+        "maxOpacity": .5, 
+        "scaleRadius": true, 
+        "useLocalExtrema": true,
+        latField: 'lat',
+        lngField: 'lon',
+      };
+        var testData = {
+          max: 8,
+          data:mydata
+        };
+        console.log(testData);
+
+        var park_heatmapLayer = new HeatmapOverlay(cfg);
+       
+        park_heatmapLayer.setData(testData);
+        toggle.addOverlay(park_heatmapLayer, "Parking Voilation Heatmap");
+    });
+
 
      </script>
   </body>

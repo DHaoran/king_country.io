@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
+   integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
+   crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
+   integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
+   crossorigin=""></script>
+   <script src="https://d3js.org/d3.v4.min.js"></script>
+   <script type="text/javascript" src="./lib/heatmap.js"></script>
+   <script type="text/javascript" src="./lib/leaflet-heatmap.js"></script>
+
+     <style>
+     html, body {
+      height: 100%;
+      width: 100%;
+      padding: 0 0 0 0;
+      margin-right: 0;
+      margin-top: 0;
+      margin-left: 0;
+      margin-bottom: 0;}
+      #mapid {height: 100%;}
+    </style>
+  </head>
+  <body>
+     <div id="mapid" class="test"></div>
+
+     <script type="text/javascript">
+      //var mymap = L.map('mapid').setView([47.4997, -122.151 ], 11);
+
+        var light = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoieXVueW91IiwiYSI6ImNpczg2aDh0NTAwMzkyeXA3MXU3YjMxeGcifQ.z-j7gq3uS7yQ2CCjiaIp1g', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+    maxZoom: 18,
+    id: 'mapbox.streets',
+    accessToken: 'pk.eyJ1IjoieXVueW91IiwiYSI6ImNpczg2aDh0NTAwMzkyeXA3MXU3YjMxeGcifQ.z-j7gq3uS7yQ2CCjiaIp1g'
+  }).addTo(mymap);
+
+  var dark = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoieXVueW91IiwiYSI6ImNpczg2aDh0NTAwMzkyeXA3MXU3YjMxeGcifQ.z-j7gq3uS7yQ2CCjiaIp1g', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+    maxZoom: 18,
+    id: 'mapbox.dark',
+    accessToken: 'pk.eyJ1IjoieXVueW91IiwiYSI6ImNpczg2aDh0NTAwMzkyeXA3MXU3YjMxeGcifQ.z-j7gq3uS7yQ2CCjiaIp1g'
+  })
+
+    var map = new L.Map('mapid', {
+      center: new L.LatLng(47.4997, -122.151),
+      zoom:11,
+      layers: [light]
+    });
+
+    var baseMaps = {
+      "Dark": dark,
+      "Street": light
+    };
+
+    var toggle = L.control.layers(baseMaps).addTo(map);
+
+
+
+
+    //Heatmap of House Price
+    d3.csv("./heatmap.csv",
+      function(mydata) {
+      var cfg = {
+        "radius": .005,
+        "maxOpacity": .8, 
+        "scaleRadius": true, 
+        "useLocalExtrema": true,
+        latField: 'lat',
+        lngField: 'long',
+        valueField: 'price'
+      };
+        //heatmapLayer.setData(data);
+        var testData = {
+          max: 8,
+          data:mydata
+        };
+        console.log(testData);
+        
+        var heatmapLayer = new HeatmapOverlay(cfg);
+        map.addLayer(heatmapLayer);
+        heatmapLayer.setData(testData);
+    });
+
+
+     </script>
+  </body>
+</html>

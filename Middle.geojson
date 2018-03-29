@@ -1,0 +1,18 @@
+{
+"type": "FeatureCollection",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "SCHOOL": "AKI KUROSE", "lat": 47.54632186, "lon": -122.2819804 }, "geometry": { "type": "Point", "coordinates": [ -122.2819804, 47.54632186 ] } },
+{ "type": "Feature", "properties": { "SCHOOL": "DENNY MIDDLE SCHOOL", "lat": 47.53165396, "lon": -122.3660415 }, "geometry": { "type": "Point", "coordinates": [ -122.3660415, 47.53165396 ] } },
+{ "type": "Feature", "properties": { "SCHOOL": "ECKSTEIN MIDDLE SCHOOL", "lat": 47.68252011, "lon": -122.2949827 }, "geometry": { "type": "Point", "coordinates": [ -122.29498270000001, 47.68252011 ] } },
+{ "type": "Feature", "properties": { "SCHOOL": "HAMILTON MIDDLE SCHOOL", "lat": 47.65708003, "lon": -122.3380275 }, "geometry": { "type": "Point", "coordinates": [ -122.3380275, 47.65708003 ] } },
+{ "type": "Feature", "properties": { "SCHOOL": "JANE ADDAMS BUILDING", "lat": 47.70994486, "lon": -122.293009 }, "geometry": { "type": "Point", "coordinates": [ -122.293009, 47.70994486 ] } },
+{ "type": "Feature", "properties": { "SCHOOL": "MADISON MIDDLE SCHOOL", "lat": 47.57298061, "lon": -122.3902797 }, "geometry": { "type": "Point", "coordinates": [ -122.3902797, 47.57298061 ] } },
+{ "type": "Feature", "properties": { "SCHOOL": "MC CLURE MIDDLE SCHOOL", "lat": 47.63682629, "lon": -122.3589552 }, "geometry": { "type": "Point", "coordinates": [ -122.3589552, 47.63682629 ] } },
+{ "type": "Feature", "properties": { "SCHOOL": "MEANY MIDDLE SCHOOL (EAST)", "lat": 47.62160316, "lon": -122.3052447 }, "geometry": { "type": "Point", "coordinates": [ -122.3052447, 47.62160316 ] } },
+{ "type": "Feature", "properties": { "SCHOOL": "MERCER MIDDLE SCHOOL", "lat": 47.56413274, "lon": -122.3120832 }, "geometry": { "type": "Point", "coordinates": [ -122.3120832, 47.56413274 ] } },
+{ "type": "Feature", "properties": { "SCHOOL": "WASHINGTON MIDDLE SCHOOL", "lat": 47.59795569, "lon": -122.3041498 }, "geometry": { "type": "Point", "coordinates": [ -122.3041498, 47.59795569 ] } },
+{ "type": "Feature", "properties": { "SCHOOL": "WHITMAN MIDDLE SCHOOL", "lat": 47.69675145, "lon": -122.3776019 }, "geometry": { "type": "Point", "coordinates": [ -122.3776019, 47.69675145 ] } },
+{ "type": "Feature", "properties": { "SCHOOL": "WILSON-PACIFIC", "lat": 47.69545053, "lon": -122.3395321 }, "geometry": { "type": "Point", "coordinates": [ -122.3395321, 47.69545053 ] } }
+]
+}
